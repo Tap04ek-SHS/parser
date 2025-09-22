@@ -12,12 +12,12 @@ from datetime import datetime
 
 # Данные для заполнения
 CHAT_ID = 5219975213
-imya = "Дарья"
-familia = "Мельченко"
-otchestvo = "Владиславовна"
-nomer_passporta = "НВ3452587"
-email = "petahorcev@gmail.com"
-parrol = "Tort2334!"
+imya = ""
+familia = ""
+otchestvo = "
+nomer_passporta = ""
+email = ""
+parrol = ""
 TOKEN = "7348822640:AAE1mnAUdFVVb62DPC5hY_ZedTJ4MT0mPoo"
 
 

@@ -11,14 +11,14 @@ import atexit
 from datetime import datetime
 
 # Данные для заполнения
-CHAT_ID = 5219975213
+CHAT_ID = 5219975003
 imya = ""
 familia = ""
 otchestvo = "
 nomer_passporta = ""
 email = ""
 parrol = ""
-TOKEN = "7348822640:AAE1mnAUdFVVb62DPC5hY_ZedTJ4MT0mPoo"
+TOKEN = "7348822640:AAE1mnAUdFVVb62DdashY_ZedTJ4MT0mPoo"
 
 
 def send_notification():

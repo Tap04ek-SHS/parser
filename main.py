@@ -11,14 +11,14 @@ import atexit
 from datetime import datetime
 
 # Данные для заполнения
-CHAT_ID = 5219975213
-imya = "Дарья"
-familia = "Середа"
-otchestvo = "Павловна"
-nomer_passporta = "AB3735214"
-email = "petahorcev@gmail.com"
-parrol = "Tort2334!"
-TOKEN = "7348822640:AAE1mnAUdFVVb62DPC5hY_ZedTJ4MT0mPoo"
+CHAT_ID = 
+imya = ""
+familia = ""
+otchestvo = ""
+nomer_passporta = ""
+email = ""
+parrol = ""
+TOKEN = ""
 
 
 def send_notification():
@@ -35,9 +35,11 @@ atexit.register(send_notification)
 
 # Настройка драйвера в HEADLESS режиме для фоновой работы
 options = Options()
-# options.add_argument("--headless=new")
-options.add_argument("--disable-gpu")
+# Активируем HEADLESS-режим для работы без экрана!
+options.add_argument("--headless=new")
+# Убеждаемся, что разрешение установлено для стабильного рендеринга
 options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
 options.add_argument("--disable-infobars")
 options.add_argument("--disable-extensions")
 options.add_argument("--disable-notifications")
@@ -59,7 +61,7 @@ def check_for_tickets():
             print(f"[{current_time}] Проверка #{check_count}...")
 
             driver.get(
-                "https://pass.rw.by/ru/route/?from=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA-%D0%9F%D0%B0%D1%81%D1%81%D0%B0%D0%B6%D0%B8%D1%80%D1%81%D0%BA%D0%B8%D0%B9&from_exp=2100001&from_esr=140210&to=%D0%9C%D0%BE%D0%B7%D1%8B%D1%80%D1%8C&to_exp=2100254&to_esr=151605&front_date=6+%D0%BD%D0%BE%D1%8F.+2025&date=2025-11-06")
+                "https://pass.rw.by/ru/route/?from=%D0%9C%D0%BE%D0%B7%D1%8B%D1%80%D1%8C&from_exp=2100254&from_esr=151605&to=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA-%D0%9F%D0%B0%D1%81%D1%81%D0%B0%D0%B6%D0%B8%D1%80%D1%81%D0%BA%D0%B8%D0%B9&to_exp=0&to_esr=0&front_date=13+%D0%BD%D0%BE%D1%8F.+2025&date=2025-11-10")
 
             # Ожидание загрузки страницы
             time.sleep(5)
@@ -77,7 +79,7 @@ def check_for_tickets():
 
             # Проверка наличия кнопки "Выбрать"
             selectors = [
-                '//*[@id="sch-route"]/div[3]/div[2]/div[1]/div[3]/div/div[2]/div/div[4]/div[2]/form/a'
+                '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div/div[4]/div[2]/form/a'
             ]
 
             ticket_found = False
@@ -113,7 +115,7 @@ def process_booking():
     try:
         # Клик по кнопке выбора места
         selectors = [
-            '//*[@id="sch-route"]/div[3]/div[2]/div[1]/div[3]/div/div[2]/div/div[4]/div[2]/form/a',
+            '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div/div[4]/div[2]/form/a',
             '//a[contains(@class, "btn") and contains(text(), "Выбрать")]'
         ]
 

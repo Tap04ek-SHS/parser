@@ -20,7 +20,6 @@ email = ""
 parrol = ""
 TOKEN = ""
 
-
 def send_notification():
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": "БИЛЕТ НАЙДЕН"}
@@ -31,7 +30,6 @@ def send_notification():
 
 
 # Регистрируем функцию для вызова при завершении программы
-atexit.register(send_notification)
 
 # Настройка драйвера в HEADLESS режиме для фоновой работы
 options = Options()
@@ -61,7 +59,7 @@ def check_for_tickets():
             print(f"[{current_time}] Проверка #{check_count}...")
 
             driver.get(
-                "https://pass.rw.by/ru/route/?from=%D0%9C%D0%BE%D0%B7%D1%8B%D1%80%D1%8C&from_exp=2100254&from_esr=151605&to=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA-%D0%9F%D0%B0%D1%81%D1%81%D0%B0%D0%B6%D0%B8%D1%80%D1%81%D0%BA%D0%B8%D0%B9&to_exp=0&to_esr=0&front_date=13+%D0%BD%D0%BE%D1%8F.+2025&date=2025-11-10")
+                "https://pass.rw.by/ru/route/?from=%D0%9C%D0%BE%D0%B7%D1%8B%D1%80%D1%8C&from_exp=2100254&from_esr=151605&to=%D0%9C%D0%B8%D0%BD%D1%81%D0%BA-%D0%9F%D0%B0%D1%81%D1%81%D0%B0%D0%B6%D0%B8%D1%80%D1%81%D0%BA%D0%B8%D0%B9&to_exp=0&to_esr=0&front_date=13+%D0%BD%D0%BE%D1%8F.+2025&date=2025-11-30")
 
             # Ожидание загрузки страницы
             time.sleep(5)
@@ -76,10 +74,40 @@ def check_for_tickets():
                 time.sleep(2)
             except:
                 pass  # Если нет cookie баннера - продолжаем
+            knopka_vhoda = driver.find_element(By.XPATH,
+                                               "/html/body/div[1]/div[1]/div[1]/div/header/div/div[3]/div[3]/ul/li[2]/a")
+            knopka_vhoda.click()
+            try:
+                # Заполнение email
+                email_pole = WebDriverWait(driver, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[1]/label/div[2]/input'))
+                )
+                email_pole.clear()
+                email_pole.send_keys(email)
+                print("Email введен")
+
+                # Заполнение пароля
+                password_pole = WebDriverWait(driver, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[2]/div[1]/div/label/div[2]/input'))
+                )
+                password_pole.clear()
+                password_pole.send_keys(parrol)
+                print("Пароль введен")
+
+                # Вход
+                voiti_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//*[@id="form-auth"]/fieldset/div[3]/input'))
+                )
+                driver.execute_script("arguments[0].click();", voiti_button)
+                print("Вход выполнен")
+                time.sleep(3)
+            except:pass
 
             # Проверка наличия кнопки "Выбрать"
             selectors = [
-                '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div/div[4]/div[2]/form/a'
+                '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[2]/div/div[4]/div[2]/form/a'
             ]
 
             ticket_found = False
@@ -115,7 +143,7 @@ def process_booking():
     try:
         # Клик по кнопке выбора места
         selectors = [
-            '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[1]/div/div[4]/div[2]/form/a',
+            '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[2]/div/div[4]/div[2]/form/a',
             '//a[contains(@class, "btn") and contains(text(), "Выбрать")]'
         ]
 
@@ -171,110 +199,18 @@ def book_ticket():
             time.sleep(2)
             driver.execute_script("arguments[0].click();", massiv_vagonov[0])
             print("Вагон выбран")
-
-        # Данные пассажира
-        dannie_passagira = WebDriverWait(driver, 15).until(
-            EC.element_to_be_clickable(
-                (By.XPATH, '//*[@id="app-place-choice"]/div[2]/div[4]/div/form/div[1]/div/div/div/div[2]/div[2]/div/a'))
-        )
-        driver.execute_script("arguments[0].scrollIntoView(true);", dannie_passagira)
-        driver.execute_script("arguments[0].click();", dannie_passagira)
-
-        # Заполнение данных...
-        fill_passenger_data()
+            time.sleep(2)
+            fill_passenger_info()
 
     except Exception as e:
         print(f"Ошибка при бронировании: {e}")
 
 
-def fill_passenger_data():
-    """Заполнение данных пассажира"""
-    try:
-        # Заполнение email
-        email_pole = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.XPATH, '//*[@id="form-auth"]/fieldset/div[1]/label/div[2]/input'))
-        )
-        email_pole.clear()
-        email_pole.send_keys(email)
-        print("Email введен")
-
-        # Заполнение пароля
-        password_pole = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located(
-                (By.XPATH, '//*[@id="form-auth"]/fieldset/div[2]/div[1]/div/label/div[2]/input'))
-        )
-        password_pole.clear()
-        password_pole.send_keys(parrol)
-        print("Пароль введен")
-
-        # Вход
-        voiti_button = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="form-auth"]/fieldset/div[3]/input'))
-        )
-        driver.execute_script("arguments[0].click();", voiti_button)
-        print("Вход выполнен")
-        time.sleep(3)
-
-        # Повторный поиск вагонов после входа
-        select_vagon_after_login()
-
-        # Данные пассажира после входа
-        dannie_passagira1 = WebDriverWait(driver, 15).until(
-            EC.element_to_be_clickable((By.XPATH,
-                                        '//*[@id="app-place-choice"]/div[2]/div[4]/div/form/div[1]/div/div/div/div[2]/div[2]/div/a'))
-        )
-        driver.execute_script("arguments[0].scrollIntoView(true);", dannie_passagira1)
-        driver.execute_script("arguments[0].click();", dannie_passagira1)
-        print("Переход к данным пассажира")
-        time.sleep(2)
-
-        # Заполнение данных пассажира
-        fill_passenger_info()
-
-    except Exception as e:
-        print(f"Ошибка в fill_passenger_data: {e}")
-        raise
-
-
-def select_vagon_after_login():
-    """Повторный поиск и выбор вагона после входа"""
-    max_attempts = 5
-    for attempt in range(max_attempts):
-        try:
-            print(f"Попытка {attempt + 1} найти вагоны после входа...")
-
-            # Поиск вагонов
-            massiv_vagonov = WebDriverWait(driver, 10).until(
-                EC.presence_of_all_elements_located((By.CLASS_NAME, "pl-accord__link-wrap"))
-            )
-            print(f"Найдено вагонов: {len(massiv_vagonov)}")
-
-            if massiv_vagonov:
-                # Прокрутка к первому вагону
-                driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
-                                      massiv_vagonov[0])
-                time.sleep(2)
-
-                # Клик по первому вагону
-                driver.execute_script("arguments[0].click();", massiv_vagonov[0])
-                print("Вагон выбран после входа")
-                time.sleep(3)
-                return True
-
-        except Exception as e:
-            print(f"Ошибка при поиске вагонов (попытка {attempt + 1}): {e}")
-            if attempt < max_attempts - 1:
-                print("Повторная попытка через 3 секунды...")
-                time.sleep(3)
-                driver.refresh()
-                time.sleep(5)
-            else:
-                print("Не удалось найти вагоны после всех попыток")
-                return False
-
 
 def fill_passenger_info():
     """Заполнение информации о пассажире"""
+    knopka_vibora_vagonchikov = driver.find_element(By.XPATH, "/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div/div[2]/div[4]/div/form/div[1]/div/div/div/div[2]/div[2]/div/a")
+    knopka_vibora_vagonchikov.click()
     try:
         # Фамилия
         pole_familii = WebDriverWait(driver, 10).until(
@@ -330,6 +266,7 @@ def fill_passenger_info():
         )
         driver.execute_script("arguments[0].click();", offormit_zakaz)
         print("Заказ оформлен!")
+        send_notification()
 
     except Exception as e:
         print(f"Ошибка при заполнении данных пассажира: {e}")

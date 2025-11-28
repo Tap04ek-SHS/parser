@@ -19,7 +19,7 @@ nomer_passporta = ""
 email = ""
 parrol = ""
 TOKEN = ""
-
+executed = False
 def send_notification():
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     payload = {"chat_id": CHAT_ID, "text": "БИЛЕТ НАЙДЕН"}
@@ -74,37 +74,8 @@ def check_for_tickets():
                 time.sleep(2)
             except:
                 pass  # Если нет cookie баннера - продолжаем
-            knopka_vhoda = driver.find_element(By.XPATH,
-                                               "/html/body/div[1]/div[1]/div[1]/div/header/div/div[3]/div[3]/ul/li[2]/a")
-            knopka_vhoda.click()
-            try:
-                # Заполнение email
-                email_pole = WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located(
-                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[1]/label/div[2]/input'))
-                )
-                email_pole.clear()
-                email_pole.send_keys(email)
-                print("Email введен")
-
-                # Заполнение пароля
-                password_pole = WebDriverWait(driver, 10).until(
-                    EC.visibility_of_element_located(
-                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[2]/div[1]/div/label/div[2]/input'))
-                )
-                password_pole.clear()
-                password_pole.send_keys(parrol)
-                print("Пароль введен")
-
-                # Вход
-                voiti_button = WebDriverWait(driver, 10).until(
-                    EC.element_to_be_clickable((By.XPATH, '//*[@id="form-auth"]/fieldset/div[3]/input'))
-                )
-                driver.execute_script("arguments[0].click();", voiti_button)
-                print("Вход выполнен")
-                time.sleep(3)
-            except:pass
-
+            if executed == False:
+                 gordiy_vhod()
             # Проверка наличия кнопки "Выбрать"
             selectors = [
                 '/html/body/div[1]/div[1]/div[1]/div/div/div/div[2]/main/div[2]/div[3]/div[2]/div[1]/div[3]/div/div[2]/div/div[4]/div[2]/form/a'
@@ -201,10 +172,43 @@ def book_ticket():
             print("Вагон выбран")
             time.sleep(2)
             fill_passenger_info()
-
     except Exception as e:
         print(f"Ошибка при бронировании: {e}")
 
+def gordiy_vhod():
+         knopka_vhoda = driver.find_element(By.XPATH,
+                                               "/html/body/div[1]/div[1]/div[1]/div/header/div/div[3]/div[3]/ul/li[2]/a")
+         knopka_vhoda.click()
+         global executed
+         executed = True
+         try:
+                # Заполнение email
+                email_pole = WebDriverWait(driver, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[1]/label/div[2]/input'))
+                )
+                email_pole.clear()
+                email_pole.send_keys(email)
+                print("Email введен")
+
+                # Заполнение пароля
+                password_pole = WebDriverWait(driver, 10).until(
+                    EC.visibility_of_element_located(
+                        (By.XPATH, '//*[@id="form-auth"]/fieldset/div[2]/div[1]/div/label/div[2]/input'))
+                )
+                password_pole.clear()
+                password_pole.send_keys(parrol)
+                print("Пароль введен")
+
+                # Вход
+                voiti_button = WebDriverWait(driver, 10).until(
+                    EC.element_to_be_clickable((By.XPATH, '//*[@id="form-auth"]/fieldset/div[3]/input'))
+                )
+                driver.execute_script("arguments[0].click();", voiti_button)
+                print("Вход выполнен")
+                time.sleep(3)
+
+         except:pass
 
 
 def fill_passenger_info():
@@ -279,3 +283,4 @@ except KeyboardInterrupt:
     print("Программа остановлена пользователем")
 finally:
     driver.quit()
+
